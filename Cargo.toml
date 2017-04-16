@@ -1,0 +1,6 @@
+[package]
+name = "json_db"
+version = "0.0.1"
+authors = ["zpallin <zpallin@gmail.com>"]
+
+[dependencies]
