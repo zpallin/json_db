@@ -4,7 +4,9 @@ A quick and easy json file management tool. The problem I was having is i/o oper
 
 ## dependencies
 
-| rust version | 1.16.0 |
+| name | version |
+|------|---------|
+| rust | 1.16.0 |
 | serde | 0.9.13 |
 | serde\_derive | 0.9.13 |
 | serde\_json | 0.9.10 |
