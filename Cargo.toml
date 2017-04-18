@@ -4,3 +4,6 @@ version = "0.0.1"
 authors = ["zpallin <zpallin@gmail.com>"]
 
 [dependencies]
+serde = "= 0.9.13"
+serde_derive = "= 0.9.13"
+serde_json = "= 0.9.10"
