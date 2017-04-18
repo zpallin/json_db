@@ -1,16 +1,14 @@
 
 #[macro_use]
-extern crate serde;
-
-#[macro_use]
 extern crate serde_derive;
+extern crate serde;
 extern crate serde_json;
-use serde::{Serialize, Deserialize};
-use std::default::Default;
-use std::fs::File;
-use std::io::{Read, Write};
-use std::fs::OpenOptions;
-use std::path::Path;
+pub use serde::{Serialize, Deserialize};
+pub use std::default::Default;
+pub use std::fs::File;
+pub use std::io::{Read, Write};
+pub use std::fs::OpenOptions;
+pub use std::path::Path;
 
 // generic empty struct for inserting empty db as default
 #[derive(Serialize, Deserialize, Debug)]
@@ -28,7 +26,7 @@ pub struct Json<S: Serialize + Deserialize> {
 pub trait JsonAble {}
 impl<S: Serialize + Deserialize> JsonAble for Json<S> {}
 
-trait JsonMake<S: Serialize + Deserialize> {
+pub trait JsonMake<S: Serialize + Deserialize> {
     fn make(data: S) -> Json<S>;
 }
 
@@ -49,7 +47,7 @@ pub struct JsonDB<J> where J: JsonAble {
 }
 
 impl<J> JsonDB<J> where J: JsonAble + Serialize + Deserialize {
-    fn new(path: &str, scheme: J) -> Self {
+    pub fn new(path: &str, scheme: J) -> Self {
         let mut db = JsonDB {
             path: path.to_owned(),
             scheme: scheme,
@@ -58,19 +56,19 @@ impl<J> JsonDB<J> where J: JsonAble + Serialize + Deserialize {
         db.load(); 
         db
     }
-    fn load(&mut self) {
+    pub fn load(&mut self) {
         let path = Path::new(&self.path);
 
         if Path::exists(&path) {
             let mut f = File::open(&path).unwrap();
             let mut buf : String = String::new();
             f.read_to_string(&mut buf);
-            println!("LOADED FILE: {}", buf);
+            //println!("LOADED FILE: {}", buf);
             self.scheme = serde_json::from_str(&buf).unwrap();
-            println!("SCHEME NOW: {}", self.get_data_string());
+            //println!("SCHEME NOW: {}", self.get_data_string());
         } else {
             let serialized_scheme = self.get_data_string();
-            println!("NEW FILE: {}", serialized_scheme);
+            //println!("NEW FILE: {}", serialized_scheme);
 
             match OpenOptions::new().create(true).write(true).open(&path) {
                 Ok(ref mut file) => {
@@ -80,15 +78,13 @@ impl<J> JsonDB<J> where J: JsonAble + Serialize + Deserialize {
             }
         }
     }
-    fn save(&self) {
+    pub fn save(&self) {
         let path = Path::new(&self.path);
 
         let mut f = File::open(&path).unwrap();
         let serialized_scheme = self.get_data_string();
 
-        println!("SAVED: Write to '{}'\n{}", 
-                 path.display(), 
-                 serialized_scheme);
+        //println!("SAVED: Write to '{}'\n{}", path.display(), serialized_scheme);
 
         match OpenOptions::new().write(true).open(&path) {
             Ok(ref mut file) => {
@@ -97,10 +93,10 @@ impl<J> JsonDB<J> where J: JsonAble + Serialize + Deserialize {
             Err(err) => { panic!("Failed to write to file '{}'", &self.path); }
         }
     }
-    fn update(&mut self, newdata: J) {
+    pub fn update(&mut self, newdata: J) {
         self.scheme = newdata;
         let serialized_scheme = self.get_data_string(); 
-        println!("UPDATED: {}", serialized_scheme);
+        //println!("UPDATED: {}", serialized_scheme);
     }
     fn get_data_string(&self) -> String {
         serde_json::to_string_pretty(&self.scheme).unwrap()
